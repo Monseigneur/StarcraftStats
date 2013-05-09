@@ -10,8 +10,6 @@ import java.io.File;
 import java.io.IOException;
 
 public class StarcraftStats {
-  public static final int FILE_FIELDS = 4;
-  
 	public static void main(String[] args) throws IOException {
 		if (args.length != 1) {
 			usage();
@@ -26,6 +24,7 @@ public class StarcraftStats {
 	  Scanner file = new Scanner(new File(fileName));
 	  
 	  if (!file.hasNextLine()) {
+	    file.close();
 	    throw new IllegalArgumentException("Incorrect file header: must be player names");
 	  }
 	  
@@ -35,6 +34,7 @@ public class StarcraftStats {
 	  while (nameScanner.hasNext()) {
 	    players.add(nameScanner.next());
 	  }
+	  nameScanner.close();
 	  
 	  GameStats gs = new GameStats(players);
 	  
@@ -49,7 +49,9 @@ public class StarcraftStats {
       String winner = line.next();
       
       gs.addGame(p1, p2, r1, r2, winner.equals(p1));
+      line.close();
     }
+    file.close();
     
     return gs;
 	}
