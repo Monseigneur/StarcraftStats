@@ -3,8 +3,8 @@
  * Starcraft Stats
  */
 
-import java.util.Set;
-import java.util.HashSet;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +18,14 @@ public class StarcraftStats {
 		GameStats gs = populateGameStats(args[0]);
 		
 		System.out.println(gs.totalGames());
+		gs.printMatchup("Huy", "Don", true);
+		gs.printMatchup("Huy", "Don", false);
+		gs.printPlayerOverallStats("Huy", true);
+		gs.printPlayerRaceStats("Huy", false);
+		gs.printPlayerRaceStats("Huy", true);
+		gs.printPlayerOverallStats("Huy", false);
+		gs.printPlayerOverallStats("Don", false);
+		gs.printPlayerOverallStats("Milan", false);
 	}
 	
 	public static GameStats populateGameStats(String fileName) throws IOException {
@@ -28,7 +36,7 @@ public class StarcraftStats {
 	    throw new IllegalArgumentException("Incorrect file header: must be player names");
 	  }
 	  
-	  Set<String> players = new HashSet<String>();
+	  List<String> players = new ArrayList<String>();
 	  String names = file.nextLine();
 	  Scanner nameScanner = new Scanner(names);
 	  while (nameScanner.hasNext()) {
