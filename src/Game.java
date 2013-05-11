@@ -1,48 +1,42 @@
-/*
- * Milan Justel
+/**
+ * @author Milan
  * Game
+ * 
+ * Represents a set of wins and loses
  */
 
 public class Game {
-  public String player1;
-  public String player2;
-  public String race1;
-  public String race2;
-  boolean p1Won;
+  public int wins;
+  public int loses;
   
-  public Game(String p1, String p2, String r1, String r2, boolean p1Winner) {
-    player1 = p1;
-    player2 = p2;
-    race1 = r1;
-    race2 = r2;
-    p1Won = p1Winner;
+  public Game() {
+    wins = 0;
+    loses = 0;
   }
   
-  public String getRaceForPlayer(String p) {
-    if (!p.equals(player1) && !p.equals(player2)) {
-      throw new IllegalArgumentException();
-    }
-    
-    if (p.equals(player1)) {
-      return race1;
+  public void addMatch(Match g) {
+    if (g.player1Won()) {
+      wins++;
     } else {
-      return race2;
+      loses++;
     }
   }
   
-  public boolean player1Won() {
-    return p1Won;
+  public int total() {
+    return wins + loses;
   }
   
-  public String getWinner() {
-    if (p1Won) {
-      return player1;
+  public String getString(boolean percentage) {
+    if (percentage) {
+      int p1Percent = 0;
+      int p2Percent = 0;
+      if (total() != 0) {
+        p1Percent = (int) Math.round(100.0 * wins / total());
+        p2Percent = (int) Math.round(100.0 * loses / total());
+      }
+      return "[" + p1Percent + ":" + p2Percent + "]";
     } else {
-      return player1;
+      return "[" + wins + ":" + loses + "]";
     }
-  }
-  
-  public Game flipGame() {
-    return new Game(player2, player1, race2, race1, !p1Won);
   }
 }

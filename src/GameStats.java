@@ -49,7 +49,7 @@ public class GameStats {
       throw new IllegalArgumentException("Illegal players");
     }
     
-    Game g = new Game(p1, p2, r1, r2, p1Won);
+    Match g = new Match(p1, p2, r1, r2, p1Won);
     matches.get(playerMap.get(p1)).get(playerMap.get(p2)).addGame(g);
     matches.get(playerMap.get(p2)).get(playerMap.get(p1)).addGame(g.flipGame());
     numGames++;
@@ -67,45 +67,53 @@ public class GameStats {
     return -1;
   }
   
-  public void printMatchup(String p1, String p2, boolean percentage) {
-    matches.get(playerMap.get(p1)).get(playerMap.get(p2)).print(percentage);
+  /* Printing methods */
+  
+  public void printTotalGames() {
+    System.out.println("Total games in program: " + totalGames());
   }
   
-  public void printPlayerOverallStats(String p, boolean percentage) {
-    List<RaceMatchup> rm = getStats(p);
+  public void printMatchup(String p1, String p2) {
+    if (p1.equals(p2) || !playerMap.containsKey(p1) || !playerMap.containsKey(p2)) {
+      System.out.println("Illegal players");
+    } else {
+      matches.get(playerMap.get(p1)).get(playerMap.get(p2)).print();
+    }
+  }
+  
+  public void printPlayerOverallStats(String p) {
+    List<Game> rm = getStats(p);
 
-    RaceMatchup r = new RaceMatchup();
+    Game r = new Game();
     for (int i = 0; i < rm.size(); i++) {
-      r.p1Wins += rm.get(i).p1Wins;
-      r.p2Wins += rm.get(i).p2Wins;
+      r.wins += rm.get(i).wins;
+      r.loses += rm.get(i).loses;
     }
     
-    String text = percentage ? "Percentage\n" : "";
-    System.out.println(text + p + "\t" + r.getString(percentage));
+    System.out.println(p + "\t" + r.getString(false) + "\t" + r.getString(true));
   }
   
-  public void printPlayerRaceStats(String p, boolean percentage) {
-    List<RaceMatchup> rm = getStats(p);
+  public void printPlayerRaceStats(String p) {
+    List<Game> rm = getStats(p);
     
-    String text = percentage ? "Percentage" : "\t";
-    System.out.println(text);
-    System.out.println("\t" + RACES.charAt(0) + "\t" + rm.get(0).getString(percentage));
-    System.out.println(p + "\t" + RACES.charAt(1) + "\t" + rm.get(1).getString(percentage));
-    System.out.println("\t" + RACES.charAt(2) + "\t" + rm.get(2).getString(percentage));
+    System.out.println("\t" + RACES.charAt(0) + "\t" + rm.get(0).getString(false) + "\t" + rm.get(0).getString(true));
+    System.out.println(p + "\t" + RACES.charAt(1) + "\t" + rm.get(1).getString(false) + "\t" + rm.get(1).getString(true));
+    System.out.println("\t" + RACES.charAt(2) + "\t" + rm.get(2).getString(false) + "\t" + rm.get(2).getString(true));
+    System.out.println();
   }
   
-  private List<RaceMatchup> getStats(String p) {
-    List<RaceMatchup> rm = new ArrayList<RaceMatchup>();
+  private List<Game> getStats(String p) {
+    List<Game> rm = new ArrayList<Game>();
     for (int i = 0; i < NUM_RACES; i++) {
-      rm.add(new RaceMatchup());
+      rm.add(new Game());
     }
     
     for (int i = 0; i < playerNames.size(); i++) {
       if (playerMap.get(p) != i) {
-        List<RaceMatchup> r = matches.get(playerMap.get(p)).get(i).getPlayerRaceMatchup();
+        List<Game> r = matches.get(playerMap.get(p)).get(i).getPlayerRaceMatchup();
         for (int j = 0; j < r.size(); j++) {
-          rm.get(j).p1Wins += r.get(j).p1Wins;
-          rm.get(j).p2Wins += r.get(j).p2Wins;
+          rm.get(j).wins += r.get(j).wins;
+          rm.get(j).loses += r.get(j).loses;
         }
       }
     }

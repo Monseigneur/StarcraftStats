@@ -1,6 +1,8 @@
 /**
- * Milan Justel
- * Matchup
+ * @author Milan
+ * PlayerMatchup
+ * 
+ * Represents a two player match up from one player's perspective with all races
  */
 
 import java.util.List;
@@ -9,61 +11,72 @@ import java.util.ArrayList;
 public class PlayerMatchup {
   private String p1;
   private String p2;
-  private List<List<RaceMatchup>> raceMatches;
+  private List<List<Game>> raceMatches;
   
   public PlayerMatchup(String player1, String player2) {
     p1 = player1;
     p2 = player2;
     
-    raceMatches = new ArrayList<List<RaceMatchup>>();
+    raceMatches = new ArrayList<List<Game>>();
     
     for (int i = 0; i < GameStats.NUM_RACES; i++) {
-      List<RaceMatchup> games = new ArrayList<RaceMatchup>();
+      List<Game> games = new ArrayList<Game>();
       for (int j = 0; j < GameStats.NUM_RACES; j++) {
-        games.add(new RaceMatchup());
+        games.add(new Game());
       }
       raceMatches.add(games);
     }
   }
   
-  public void addGame(Game g) {
+  public void addGame(Match g) {
     int p1Index = GameStats.RACES.indexOf(g.getRaceForPlayer(p1));
     int p2Index = GameStats.RACES.indexOf(g.getRaceForPlayer(p2));
     
-    raceMatches.get(p1Index).get(p2Index).addGame(g);
+    raceMatches.get(p1Index).get(p2Index).addMatch(g);
   }
   
-  public void print(boolean percentage) {
+  public void print() {
     String p1Line1 = "";
     String p1Line2 = "";
     String p1Line3 = "";
     
     for (int i = 0; i < GameStats.NUM_RACES; i++) {
-      p1Line1 += "\t" + raceMatches.get(0).get(i).getString(percentage);
-      p1Line2 += "\t" + raceMatches.get(1).get(i).getString(percentage);
-      p1Line3 += "\t" + raceMatches.get(2).get(i).getString(percentage);
+      p1Line1 += "\t" + raceMatches.get(0).get(i).getString(false);
+      p1Line2 += "\t" + raceMatches.get(1).get(i).getString(false);
+      p1Line3 += "\t" + raceMatches.get(2).get(i).getString(false);
     }
     
-    String text = percentage ? "Percentage" : "\t";
-    System.out.println("\t\t\t" + p2);
-    System.out.println(text + "\t" + GameStats.RACES.charAt(0) + "\t" + GameStats.RACES.charAt(1) + "\t" + GameStats.RACES.charAt(2));
+    p1Line1 += "\t";
+    p1Line2 += "\t";
+    p1Line3 += "\t";
+    
+    for (int i = 0; i < GameStats.NUM_RACES; i++) {
+      p1Line1 += "\t" + raceMatches.get(0).get(i).getString(true);
+      p1Line2 += "\t" + raceMatches.get(1).get(i).getString(true);
+      p1Line3 += "\t" + raceMatches.get(2).get(i).getString(true);
+    }
+
+    System.out.println("\t\t\t" + p2 + "\t\t\t\tPercentage");
+    String headerLine = GameStats.RACES.charAt(0) + "\t" + GameStats.RACES.charAt(1) + "\t" + GameStats.RACES.charAt(2);
+    System.out.println("\t\t" + headerLine + "\t\t" + headerLine);
     System.out.println("\t" + GameStats.RACES.charAt(0) + p1Line1);
     System.out.println(p1 + "\t" + GameStats.RACES.charAt(1) + p1Line2);
     System.out.println("\t" + GameStats.RACES.charAt(2) + p1Line3);
+    System.out.println();
   }
   
-  public List<RaceMatchup> getPlayerRaceMatchup() {
-    List<RaceMatchup> rm = new ArrayList<RaceMatchup>();
+  public List<Game> getPlayerRaceMatchup() {
+    List<Game> games = new ArrayList<Game>();
     
     for (int i = 0; i < GameStats.NUM_RACES; i++) {
-      RaceMatchup r = new RaceMatchup();
+      Game g = new Game();
       for (int j = 0; j < GameStats.NUM_RACES; j++) {
-        r.p1Wins += raceMatches.get(i).get(j).p1Wins;
-        r.p2Wins += raceMatches.get(i).get(j).p2Wins;
+        g.wins += raceMatches.get(i).get(j).wins;
+        g.loses += raceMatches.get(i).get(j).loses;
       }
-      rm.add(r);
+      games.add(g);
       
     }
-    return rm;
+    return games;
   }
 }
