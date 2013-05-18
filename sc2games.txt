@@ -1,7 +1,10 @@
+# Format:
+# P1 P2 P3 ... Pn
+# P1 P1 R1 R2 Winner
 Don Huy Milan
 Don Huy Z P Huy
 Milan Don Z T Milan
-Milan Don Z P Don
+# Milan Don Z P Don
 Huy Milan T Z Milan
-Don Huy Z P Don
+# Don Huy Z P Don
 Don Huy Z P Don

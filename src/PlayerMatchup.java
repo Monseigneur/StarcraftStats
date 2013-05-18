@@ -37,7 +37,7 @@ public class PlayerMatchup {
     if (!player1.equals(m.player1) || !player2.equals(m.player2)) {
       throw new IllegalArgumentException("Illegal player for this matchup");
     }
-    String key = RACES.charAt(m.race1) + "v" + RACES.charAt(m.race2);
+    String key = m.race1 + "v" + m.race2;
     int winnerIndex;
     if (m.p1Won) {
       winnerIndex = 0;

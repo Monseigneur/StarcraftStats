@@ -1,8 +1,11 @@
+
 /*
+
  * Milan Justel
  * GameStats
  */
 
+/*
 import java.util.Set;
 import java.util.List;
 import java.util.ArrayList;
@@ -49,9 +52,9 @@ public class GameStats1 {
       throw new IllegalArgumentException("Illegal players");
     }
     
-    Match g = new Match(p1, p2, r1, r2, p1Won);
+    Match g = new Match(p1, p2, r1, r2, "");
     matches.get(playerMap.get(p1)).get(playerMap.get(p2)).addGame(g);
-    matches.get(playerMap.get(p2)).get(playerMap.get(p1)).addGame(g.flipGame());
+    matches.get(playerMap.get(p2)).get(playerMap.get(p1)).addGame(g);
     numGames++;
   }
   
@@ -66,8 +69,6 @@ public class GameStats1 {
   public int gamesForPlayer(String player) {
     return -1;
   }
-  
-  /* Printing methods */
   
   public void printTotalGames() {
     System.out.println("Total games in program: " + totalGames());
@@ -120,3 +121,4 @@ public class GameStats1 {
     return rm;
   }
 }
+*/

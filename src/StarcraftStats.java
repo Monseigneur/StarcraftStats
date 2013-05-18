@@ -3,14 +3,16 @@
  * Starcraft Stats
  */
 
+import java.util.Collections;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Scanner;
 import java.io.File;
 import java.io.IOException;
 
 public class StarcraftStats {
-  public static final String VERSION = "1.0";
+  public static final String VERSION = "1.1";
+  public static final String COMMENT_MARK = "#";
   public static final String[] commands = {
     "0: Total games in program",
     "1: All player stats",
@@ -18,7 +20,8 @@ public class StarcraftStats {
     "3: All matchup stats",
     "4: Matchup stats",
     "5: All player race stats",
-    "6: Player race stats"
+    "6: Player race stats",
+    "exit"
   };
   
 	public static void main(String[] args) throws IOException {
@@ -26,123 +29,95 @@ public class StarcraftStats {
 			usage();
 		}
 		
-		GameStats1 gs = populateGameStats(args[0]);
+    System.out.println("Welcome to the Starcraft Stats application! Version " + VERSION);
+		
+		GameStats gs = populateGameStats(args[0]);
 		Scanner console = new Scanner(System.in);
 		
-		System.out.println("Welcome to the Starcraft Stats application! Version " + VERSION);
-		do {
-		  displayCommands();
-		  executeCommand(gs, console);
-		} while (newCommand(console));
+		while (executeCommand(gs, console)) { }
 		
 		System.out.println("Thank you!");
 		
 		console.close();
 	}
 	
-	public static GameStats1 populateGameStats(String fileName) throws IOException {
+	/* PRIVATE METHODS */
+	
+	/**
+	 * Prints the program usage
+	 */
+	private static void usage() {
+    System.out.println("USAGE: StarcraftStats FILENAME");
+  }
+	
+	/**
+	 * Processes the game data from a file
+	 * @param fileName The name of the file
+	 * @return A GameStats object with all of the data from the file
+	 * @throws IOException If an error occurs when opening and reading the file
+	 */
+	private static GameStats populateGameStats(String fileName) throws IOException {
 	  Scanner file = new Scanner(new File(fileName));
 	  
-	  if (!file.hasNextLine()) {
-	    file.close();
-	    throw new IllegalArgumentException("Incorrect file header: must be player names");
+	  GameStats gs = null;
+	  boolean processPlayerLine = false;
+	  int numGames = 0;
+	  
+	  while (file.hasNextLine()) {
+	    String line = file.nextLine();
+	    if (!line.startsWith(COMMENT_MARK)) {
+	      if (!processPlayerLine) {
+	        // The first line containing player names
+	        List<String> players = new LinkedList<String>();
+	        Scanner nameScanner = new Scanner(line);
+	        while (nameScanner.hasNext()) {
+	          players.add(nameScanner.next());
+	        }
+	        nameScanner.close();
+	        Collections.sort(players);
+	        
+	        gs = new GameStats(players);
+	        processPlayerLine = true;
+	      } else {
+	        // Lines containing game data
+	        Scanner gameScanner = new Scanner(line);
+	        
+	        String p1 = gameScanner.next();
+	        String p2 = gameScanner.next();
+	        char r1 = gameScanner.next().toUpperCase().charAt(0);
+	        char r2 = gameScanner.next().toUpperCase().charAt(0);
+	        String winner = gameScanner.next();
+	        gameScanner.close();
+	        
+	        numGames++;
+	        Match m = new Match(p1, p2, r1, r2, winner);
+	        gs.addMatch(m);
+	      }
+	    }
 	  }
-	  
-	  List<String> players = new ArrayList<String>();
-	  String names = file.nextLine();
-	  Scanner nameScanner = new Scanner(names);
-	  while (nameScanner.hasNext()) {
-	    players.add(nameScanner.next());
-	  }
-	  nameScanner.close();
-	  
-	  GameStats1 gs = new GameStats1(players);
-	  
-    while (file.hasNextLine()) {
-      String gameLine = file.nextLine();
-      Scanner line = new Scanner(gameLine);
-      
-      String p1 = line.next();
-      String p2 = line.next();
-      String r1 = line.next();
-      String r2 = line.next();
-      String winner = line.next();
-      
-      gs.addGame(p1, p2, r1.charAt(0), r2.charAt(0), winner.equals(p1));
-      line.close();
-    }
-    file.close();
+	  file.close();
     
+	  System.out.println("Number of games processed: " + numGames);
+	  
     return gs;
 	}
-	
-	public static void usage() {
-		System.out.println("USAGE: StarcraftStats FILENAME");
-	}
-	
-	public static boolean newCommand(Scanner console) {
-	  System.out.print("New command? Y/N ");
-	  String line = console.nextLine();
-	  return line.startsWith("y") || line.startsWith("Y");
-	}
-	
-	public static void executeCommand(GameStats1 gs, Scanner console) {
-	  List<String> players = gs.getPlayers();
-    String line = console.nextLine();
-    if (line.isEmpty()) {
-      System.out.println("Unknown command");
-      return;
-    }
-	  int choice = Integer.parseInt(line);
+
+	private static boolean executeCommand(GameStats gs, Scanner console) {
+	  System.out.print("Which command? (s)how (e)xit ");
+	  String choice = console.nextLine().toLowerCase();
 	  
-	  if (choice == 0) {
-	    gs.printTotalGames();
-	  } else if (choice == 1) {
-	    System.out.println("Player game stats");
-	    System.out.println("Name\tRaw\tPercentage");
-	    for (String p : players) {
-	      gs.printPlayerOverallStats(p);
-	    }
-	  } else if (choice == 2) {
-	    System.out.print("Which player? ");
-	    String p = console.nextLine();
-	    System.out.println("Player game stats");
-	    System.out.println("Name\tRaw\tPercentage");
-	    gs.printPlayerOverallStats(p);
-	  } else if (choice == 3) {
-	    System.out.println("Player matchup stats");
-	    for (String p1 : players) {
-  	    for (String p2 : players) {
-  	      if (!p1.equals(p2)) {
-  	        gs.printMatchup(p1, p2);
-  	      }
-  	    }
-	    }
-	  } else if (choice == 4) {
-	    System.out.print("Which two players? ");
-	    String nameLine = console.nextLine();
-	    Scanner temp = new Scanner(nameLine);
-	    String p1 = temp.next();
-	    String p2 = temp.next();
-	    temp.close();
-	    System.out.println("Player matchup stats");
-	    gs.printMatchup(p1, p2);
-	  } else if (choice == 5) {
-	    System.out.println("Name\tRace\tRaw\tPercentage");
-	    for (String p : players) {
-	      gs.printPlayerRaceStats(p);
-	    }
-	  } else if (choice == 6) {
-	    System.out.print("Which player? ");
-	    String p = console.nextLine();
-	    System.out.println("Name\tRace\tRaw\tPercentage");
-	    gs.printPlayerRaceStats(p);
+	  if (choice.startsWith("s")) {
+	    displayCommands();
+	  } else if (choice.startsWith("e")) {
+	    return false;
 	  } else {
-	    System.out.println("Command NYI");
+	    System.out.println("Unknown command");
 	  }
+	  
+	  return true;
 	}
 	
-	public static void displayCommands() {
+	private static void displayCommands() {
 	  System.out.println("Possible commands:");
 	  for (int i = 0; i < commands.length; i++) {
 	    System.out.println("\t" + commands[i]);
