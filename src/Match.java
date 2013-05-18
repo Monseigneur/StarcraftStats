@@ -8,8 +8,8 @@
 public class Match {
   public String player1;
   public String player2;
-  public String race1;
-  public String race2;
+  public char race1;
+  public char race2;
   boolean p1Won;
   
   /**
@@ -20,7 +20,7 @@ public class Match {
    * @param r2 Race of player 2
    * @param p1Winner If player 1 won the game
    */
-  public Match(String p1, String p2, String r1, String r2, boolean p1Winner) {
+  public Match(String p1, String p2, char r1, char r2, boolean p1Winner) {
     player1 = p1;
     player2 = p2;
     race1 = r1;
@@ -34,7 +34,7 @@ public class Match {
    * @return The race for the given player
    * @throws IllegalArgumentException if the player is not in this match
    */
-  public String getRaceForPlayer(String p) {
+  public char getRaceForPlayer(String p) {
     if (!p.equals(player1) && !p.equals(player2)) {
       throw new IllegalArgumentException();
     }

@@ -1,0 +1,3 @@
+Notes
+
+fully connected, use adjacency matrix

@@ -1,7 +1,7 @@
 
 public class TestMain {
   public static void main(String[] args) {
-    PlayerMatchup p = new PlayerMatchup("Milan", "Don");
+    PlayerMatchup1 p = new PlayerMatchup1("Milan", "Don");
     
     p.print();
   }

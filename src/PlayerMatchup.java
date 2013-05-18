@@ -1,82 +1,54 @@
 /**
- * @author Milan
- * PlayerMatchup
  * 
- * Represents a two player match up from one player's perspective with all races
+ * @author milanj91
+ *
  */
 
-import java.util.List;
-import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 
 public class PlayerMatchup {
-  private String p1;
-  private String p2;
-  private List<List<Game>> raceMatches;
+  public static final String RACES = "PTZ";
   
-  public PlayerMatchup(String player1, String player2) {
-    p1 = player1;
-    p2 = player2;
+  private String player1;
+  private String player2;
+  private int p1Wins;
+  private int p2Wins;
+  
+  private Map<String, Integer[]> raceMatchupMap;
+  
+  public PlayerMatchup(String p1, String p2) {
+    player1 = p1;
+    player2 = p2;
+    p1Wins = 0;
+    p2Wins = 0;
     
-    raceMatches = new ArrayList<List<Game>>();
-    
-    for (int i = 0; i < GameStats.NUM_RACES; i++) {
-      List<Game> games = new ArrayList<Game>();
-      for (int j = 0; j < GameStats.NUM_RACES; j++) {
-        games.add(new Game());
+    raceMatchupMap = new HashMap<String, Integer[]>();
+    for (int r1 = 0; r1 < RACES.length(); r1++) {
+      for (int r2 = 0; r2 < RACES.length(); r2++) {
+        String key = RACES.charAt(r1) + "v" + RACES.charAt(r2);
+        Integer[] raceMatchupGames = {0, 0};
+        raceMatchupMap.put(key, raceMatchupGames);        
       }
-      raceMatches.add(games);
     }
   }
   
-  public void addGame(Match g) {
-    int p1Index = GameStats.RACES.indexOf(g.getRaceForPlayer(p1));
-    int p2Index = GameStats.RACES.indexOf(g.getRaceForPlayer(p2));
-    
-    raceMatches.get(p1Index).get(p2Index).addMatch(g);
+  public void addMatch(Match m) {
+    if (!player1.equals(m.player1) || !player2.equals(m.player2)) {
+      throw new IllegalArgumentException("Illegal player for this matchup");
+    }
+    String key = RACES.charAt(m.race1) + "v" + RACES.charAt(m.race2);
+    int winnerIndex;
+    if (m.p1Won) {
+      winnerIndex = 0;
+      p1Wins++;
+    } else {
+      winnerIndex = 1;
+      p2Wins++;
+    }
+    raceMatchupMap.get(key)[winnerIndex]++;
   }
   
-  public void print() {
-    String p1Line1 = "";
-    String p1Line2 = "";
-    String p1Line3 = "";
-    
-    for (int i = 0; i < GameStats.NUM_RACES; i++) {
-      p1Line1 += "\t" + raceMatches.get(0).get(i).getString(false);
-      p1Line2 += "\t" + raceMatches.get(1).get(i).getString(false);
-      p1Line3 += "\t" + raceMatches.get(2).get(i).getString(false);
-    }
-    
-    p1Line1 += "\t";
-    p1Line2 += "\t";
-    p1Line3 += "\t";
-    
-    for (int i = 0; i < GameStats.NUM_RACES; i++) {
-      p1Line1 += "\t" + raceMatches.get(0).get(i).getString(true);
-      p1Line2 += "\t" + raceMatches.get(1).get(i).getString(true);
-      p1Line3 += "\t" + raceMatches.get(2).get(i).getString(true);
-    }
-
-    System.out.println("\t\t\t" + p2 + "\t\t\t\tPercentage");
-    String headerLine = GameStats.RACES.charAt(0) + "\t" + GameStats.RACES.charAt(1) + "\t" + GameStats.RACES.charAt(2);
-    System.out.println("\t\t" + headerLine + "\t\t" + headerLine);
-    System.out.println("\t" + GameStats.RACES.charAt(0) + p1Line1);
-    System.out.println(p1 + "\t" + GameStats.RACES.charAt(1) + p1Line2);
-    System.out.println("\t" + GameStats.RACES.charAt(2) + p1Line3);
-    System.out.println();
-  }
-  
-  public List<Game> getPlayerRaceMatchup() {
-    List<Game> games = new ArrayList<Game>();
-    
-    for (int i = 0; i < GameStats.NUM_RACES; i++) {
-      Game g = new Game();
-      for (int j = 0; j < GameStats.NUM_RACES; j++) {
-        g.wins += raceMatches.get(i).get(j).wins;
-        g.loses += raceMatches.get(i).get(j).loses;
-      }
-      games.add(g);
-      
-    }
-    return games;
-  }
+  /* Getter Methods */
+  // none yet lol
 }

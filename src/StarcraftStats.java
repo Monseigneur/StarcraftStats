@@ -26,7 +26,7 @@ public class StarcraftStats {
 			usage();
 		}
 		
-		GameStats gs = populateGameStats(args[0]);
+		GameStats1 gs = populateGameStats(args[0]);
 		Scanner console = new Scanner(System.in);
 		
 		System.out.println("Welcome to the Starcraft Stats application! Version " + VERSION);
@@ -40,7 +40,7 @@ public class StarcraftStats {
 		console.close();
 	}
 	
-	public static GameStats populateGameStats(String fileName) throws IOException {
+	public static GameStats1 populateGameStats(String fileName) throws IOException {
 	  Scanner file = new Scanner(new File(fileName));
 	  
 	  if (!file.hasNextLine()) {
@@ -56,7 +56,7 @@ public class StarcraftStats {
 	  }
 	  nameScanner.close();
 	  
-	  GameStats gs = new GameStats(players);
+	  GameStats1 gs = new GameStats1(players);
 	  
     while (file.hasNextLine()) {
       String gameLine = file.nextLine();
@@ -68,7 +68,7 @@ public class StarcraftStats {
       String r2 = line.next();
       String winner = line.next();
       
-      gs.addGame(p1, p2, r1, r2, winner.equals(p1));
+      gs.addGame(p1, p2, r1.charAt(0), r2.charAt(0), winner.equals(p1));
       line.close();
     }
     file.close();
@@ -86,7 +86,7 @@ public class StarcraftStats {
 	  return line.startsWith("y") || line.startsWith("Y");
 	}
 	
-	public static void executeCommand(GameStats gs, Scanner console) {
+	public static void executeCommand(GameStats1 gs, Scanner console) {
 	  List<String> players = gs.getPlayers();
     String line = console.nextLine();
     if (line.isEmpty()) {
