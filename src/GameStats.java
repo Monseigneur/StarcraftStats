@@ -37,13 +37,11 @@ public class GameStats {
    * @throws IllegalArgumentException if the players are unknown
    */
   public void addMatch(Match m) {
-    if (!players.contains(m.player1) || !players.contains(m.player2)) {
-      throw new IllegalArgumentException("Unknown player names");
-    }
+    verifyPlayer(m.player1);
+    verifyPlayer(m.player2);
+    verifyGameRace(m.race1);
+    verifyGameRace(m.race2);
     
-    if (PlayerMatchup.RACES.indexOf(m.race1) == -1 || PlayerMatchup.RACES.indexOf(m.race2) == -1) {
-      throw new IllegalArgumentException("Unknown player races");
-    }
     int[] indices = getPlayerIndices(m.player1, m.player2);
     matchups[indices[0]][indices[1]].addMatch(m);
   }
@@ -54,6 +52,20 @@ public class GameStats {
    */
   public List<String> getPlayers() {
     return players;
+  }
+  
+  /* GETTER METHODS */
+  public Integer[] getSpecificMatchup(String p1, String p2, char r1, char r2) {
+    verifyPlayer(p1);
+    verifyPlayer(p2);
+    verifyGameRace(r1);
+    verifyGameRace(r2);
+    int[] indices = getPlayerIndices(p1, p2);
+    return matchups[indices[0]][indices[1]].getRecordForMatchup(r1, r2);
+  }
+  
+  public int[] getOverallRecord(String p) {
+    return null;
   }
   
   /* PRIVATE METHODS */
@@ -73,6 +85,18 @@ public class GameStats {
     } else {
       int[] ar = {players.indexOf(p2), players.indexOf(p1) - 1};
       return ar;
+    }
+  }
+  
+  private void verifyPlayer(String p) {
+    if (!players.contains(p)) {
+      throw new IllegalArgumentException("Illegal player names");
+    }
+  }
+  
+  private void verifyGameRace(char r) {
+    if (PlayerMatchup.RACES.indexOf(Character.toUpperCase(r)) == -1) {
+      throw new IllegalArgumentException("Illegal player race");
     }
   }
 }

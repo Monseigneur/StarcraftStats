@@ -34,7 +34,7 @@ public class StarcraftStats {
 		GameStats gs = populateGameStats(args[0]);
 		Scanner console = new Scanner(System.in);
 		
-		while (executeCommand(gs, console)) { }
+		while (executeCommand(gs, console));
 		
 		System.out.println("Thank you!");
 		
@@ -103,11 +103,13 @@ public class StarcraftStats {
 	}
 
 	private static boolean executeCommand(GameStats gs, Scanner console) {
-	  System.out.print("Which command? (s)how (e)xit ");
+	  System.out.print("Which command? (h)elp (e)xit ");
 	  String choice = console.nextLine().toLowerCase();
 	  
-	  if (choice.startsWith("s")) {
+	  if (choice.startsWith("h")) {
 	    displayCommands();
+	  } else if (choice.startsWith("s")) {
+	    getSpecificMatchup(gs, console);
 	  } else if (choice.startsWith("e")) {
 	    return false;
 	  } else {
@@ -122,5 +124,15 @@ public class StarcraftStats {
 	  for (int i = 0; i < commands.length; i++) {
 	    System.out.println("\t" + commands[i]);
 	  }
+	}
+	
+	private static void getSpecificMatchup(GameStats gs, Scanner console) {
+	  System.out.print("Which matchup? (P1 P2 R1 R2): ");
+	  String p1 = console.next();
+	  String p2 = console.next();
+	  char r1 = console.next().charAt(0);
+	  char r2 = console.next().charAt(1);
+	  Integer[] ret = gs.getSpecificMatchup(p1, p2, r1, r2);
+	  System.out.println(p1 + " vs " + p2);
 	}
 }

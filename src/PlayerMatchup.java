@@ -50,5 +50,12 @@ public class PlayerMatchup {
   }
   
   /* Getter Methods */
-  // none yet lol
+  public Integer[] getRecord() {
+    return new Integer[] {p1Wins, p2Wins};
+  }
+  
+  public Integer[] getRecordForMatchup(char r1, char r2) {
+    String key = r1 + "v" + r2;
+    return raceMatchupMap.get(key);
+  }
 }
